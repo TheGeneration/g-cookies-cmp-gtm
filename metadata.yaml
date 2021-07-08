@@ -1,5 +1,5 @@
 homepage: "https://thegeneration.se"
 documentation: "https://thegeneration.se"
 versions:
-  - sha: 4290de1785e8335b554e5b16916e33d4b21c568d
+  - sha: b1c504ecd7687801c31dde9b5823bca2d57e3f7a
     changeNotes: Initial release
