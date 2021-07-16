@@ -1,12 +1,4 @@
-﻿___TERMS_OF_SERVICE___
-
-By creating or modifying this file you agree to Google Tag Manager's Community
-Template Gallery Developer Terms of Service available at
-https://developers.google.com/tag-manager/gallery-tos (or such other URL as
-Google may provide), as modified from time to time.
-
-
-___INFO___
+﻿___INFO___
 
 {
   "type": "TAG",
@@ -100,7 +92,9 @@ ___TEMPLATE_PARAMETERS___
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
 const setDefaultConsentState = require('setDefaultConsentState');
+const updateConsentState = require('updateConsentState');
 const callInWindow = require('callInWindow');
+const createQueue = require('createQueue');
 
 // Set default consent state based on user settings
 setDefaultConsentState({
@@ -111,7 +105,17 @@ setDefaultConsentState({
   'security_storage': 'granted'
 });
 
-callInWindow('gCookiesInit');
+const updatedConsents = callInWindow('gCookiesInit');
+
+if (updatedConsents) {
+  updateConsentState(updatedConsents);
+  
+  // Used with products that does not have native support to consent in GTM
+  const dataLayerPush = createQueue('dataLayer');
+  dataLayerPush( {
+    'event': 'Cookie Consent Updated'
+  } );
+}
 
 data.gtmOnSuccess();
 
@@ -346,6 +350,45 @@ ___WEB_PERMISSIONS___
                     "boolean": true
                   }
                 ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "dataLayer"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  }
+                ]
               }
             ]
           }
@@ -367,6 +410,6 @@ scenarios: []
 
 ___NOTES___
 
-Created on 2021-07-16 14:07:25
+Created on 2021-07-16 15:25:27
 
 
