@@ -100,6 +100,7 @@ ___TEMPLATE_PARAMETERS___
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
 const setDefaultConsentState = require('setDefaultConsentState');
+const callInWindow = require('callInWindow');
 
 // Set default consent state based on user settings
 setDefaultConsentState({
@@ -109,6 +110,8 @@ setDefaultConsentState({
   'ad_storage': data.adStorage,
   'security_storage': 'granted'
 });
+
+callInWindow('gCookiesInit');
 
 data.gtmOnSuccess();
 
@@ -292,6 +295,67 @@ ___WEB_PERMISSIONS___
       "isEditedByUser": true
     },
     "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "access_globals",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "keys",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "key"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  },
+                  {
+                    "type": 1,
+                    "string": "execute"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "gCookiesInit"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  },
+                  {
+                    "type": 8,
+                    "boolean": false
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
   }
 ]
 
@@ -303,6 +367,6 @@ scenarios: []
 
 ___NOTES___
 
-Created on 2021-07-08 14:12:38
+Created on 2021-07-16 14:07:25
 
 
