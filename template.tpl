@@ -113,7 +113,7 @@ if (updatedConsents) {
   // Used with products that does not have native support to consent in GTM
   const dataLayerPush = createQueue('dataLayer');
   dataLayerPush( {
-    'event': 'Cookie Consent Updated'
+    'event': 'g_cookies_consent_updated'
   } );
 }
 
