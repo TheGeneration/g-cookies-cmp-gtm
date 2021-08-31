@@ -95,6 +95,7 @@ const setDefaultConsentState = require('setDefaultConsentState');
 const updateConsentState = require('updateConsentState');
 const callInWindow = require('callInWindow');
 const createQueue = require('createQueue');
+const callLater = require('callLater');
 
 // Set default consent state based on user settings
 setDefaultConsentState({
@@ -105,19 +106,38 @@ setDefaultConsentState({
   'security_storage': 'granted'
 });
 
-const updatedConsents = callInWindow('gCookiesInit');
+let tries = 0;
+const maxTries = 100;
 
-if (updatedConsents) {
-  updateConsentState(updatedConsents);
+const handleInit = () => {
+  const updatedConsents = callInWindow('gCookiesInit');
   
-  // Used with products that does not have native support to consent in GTM
-  const dataLayerPush = createQueue('dataLayer');
-  dataLayerPush( {
-    'event': 'g_cookies_consent_updated'
-  } );
-}
+  // G-Cookies has not been loaded
+  if (typeof updatedConsents === 'undefined') {    
+    if (tries > maxTries) {
+      data.gtmOnSuccess();
+      return;
+    }
+    
+    callLater(handleInit);
+    ++tries;
+    return;
+  }
+  
+  if (updatedConsents) {
+    updateConsentState(updatedConsents);
+  
+    // Used with products that does not have native support to consent in GTM
+    const dataLayerPush = createQueue('dataLayer');
+    dataLayerPush({
+      'event': 'g_cookies_consent_updated'
+    });
+  }
+  
+  data.gtmOnSuccess();
+};
 
-data.gtmOnSuccess();
+handleInit();
 
 
 ___WEB_PERMISSIONS___
@@ -411,5 +431,3 @@ scenarios: []
 ___NOTES___
 
 Created on 2021-07-16 15:25:27
-
-
