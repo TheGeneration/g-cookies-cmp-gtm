@@ -100,6 +100,7 @@ const callLater = require('callLater');
 // Set default consent state based on user settings
 setDefaultConsentState({
   'functional_storage': data.generalConsent,
+  'functionality_storage': data.generalConsent,
   'personalization_storage': data.generalConsent,
   'analytics_storage': data.analyticsStorage,
   'ad_storage': data.adStorage,
@@ -206,6 +207,37 @@ ___WEB_PERMISSIONS___
                   {
                     "type": 1,
                     "string": "functional_storage"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "consentType"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "functionality_storage"
                   },
                   {
                     "type": 8,
