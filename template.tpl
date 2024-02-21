@@ -6,7 +6,9 @@
   "version": 1,
   "securityGroups": [],
   "displayName": "G-Cookies CMP",
-  "categories": ["TAG_MANAGEMENT"],
+  "categories": [
+    "TAG_MANAGEMENT"
+  ],
   "brand": {
     "id": "brand_dummy",
     "displayName": "",
@@ -83,6 +85,40 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "simpleValueType": true
+      },
+      {
+        "type": "SELECT",
+        "name": "adsDataRedaction",
+        "displayName": "Redact ads data (ads_data_redaction)",
+        "macrosInSelect": true,
+        "selectItems": [
+          {
+            "value": false,
+            "displayValue": "No"
+          },
+          {
+            "value": true,
+            "displayValue": "Yes"
+          }
+        ],
+        "simpleValueType": true
+      },
+      {
+        "type": "SELECT",
+        "name": "urlPassthrough",
+        "displayName": "Pass through ad click (url_passthrough )",
+        "macrosInSelect": true,
+        "selectItems": [
+          {
+            "value": true,
+            "displayValue": "Yes"
+          },
+          {
+            "value": false,
+            "displayValue": "No"
+          }
+        ],
+        "simpleValueType": true
       }
     ]
   }
@@ -96,23 +132,26 @@ const updateConsentState = require('updateConsentState');
 const callInWindow = require('callInWindow');
 const createQueue = require('createQueue');
 const callLater = require('callLater');
+const gtagSet = require('gtagSet');
 
 // Set default consent state based on user settings
 setDefaultConsentState({
-  'functional_storage': data.generalConsent,
   'functionality_storage': data.generalConsent,
   'personalization_storage': data.generalConsent,
   'analytics_storage': data.analyticsStorage,
   'ad_storage': data.adStorage,
+  'ad_user_data': data.adStorage,
+  'ad_personalization': data.adStorage,
   'security_storage': 'granted'
 });
 
 let tries = 0;
 const maxTries = 100;
-
 const handleInit = () => {
-  const updatedConsents = callInWindow('gCookiesInit');
+  gtagSet('ads_data_redaction', data.adsDataRedaction);
+  gtagSet('url_passthrough', data.urlPassthrough);
   
+  const updatedConsents = callInWindow('gCookiesInit');
   // G-Cookies has not been loaded
   if (typeof updatedConsents === 'undefined') {    
     if (tries > maxTries) {
@@ -176,37 +215,6 @@ ___WEB_PERMISSIONS___
                   {
                     "type": 1,
                     "string": "ad_storage"
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  }
-                ]
-              },
-              {
-                "type": 3,
-                "mapKey": [
-                  {
-                    "type": 1,
-                    "string": "consentType"
-                  },
-                  {
-                    "type": 1,
-                    "string": "read"
-                  },
-                  {
-                    "type": 1,
-                    "string": "write"
-                  }
-                ],
-                "mapValue": [
-                  {
-                    "type": 1,
-                    "string": "functional_storage"
                   },
                   {
                     "type": 8,
@@ -341,6 +349,68 @@ ___WEB_PERMISSIONS___
                     "boolean": true
                   }
                 ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "consentType"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "ad_user_data"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
+              },
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "consentType"
+                  },
+                  {
+                    "type": 1,
+                    "string": "read"
+                  },
+                  {
+                    "type": 1,
+                    "string": "write"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "ad_personalization"
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  },
+                  {
+                    "type": 8,
+                    "boolean": true
+                  }
+                ]
               }
             ]
           }
@@ -451,6 +521,57 @@ ___WEB_PERMISSIONS___
       "isEditedByUser": true
     },
     "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "write_data_layer",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "keyPatterns",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 1,
+                "string": "ads_data_redaction"
+              },
+              {
+                "type": 1,
+                "string": "url_passthrough"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "logging",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "environments",
+          "value": {
+            "type": 1,
+            "string": "all"
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
   }
 ]
 
@@ -463,3 +584,5 @@ scenarios: []
 ___NOTES___
 
 Created on 2021-07-16 15:25:27
+
+
