@@ -106,7 +106,7 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "SELECT",
         "name": "urlPassthrough",
-        "displayName": "Pass through ad click (url_passthrough )",
+        "displayName": "Pass through ad click (url_passthrough)",
         "macrosInSelect": true,
         "selectItems": [
           {
